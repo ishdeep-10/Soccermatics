@@ -9,20 +9,20 @@ Investigate Points Moving Average
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import numpy as np
 
 ##############################################################################
 # Downloading data
 # ----------------------------
-# For our task we will download the data from `Football-Data <https://football-data.co.uk/>`_ with match scores from 
-# the English Premier League since Pep Guardiona began to coach Manchester City. Here, we download the data, save it in 
-# a dataframe and append to list and then store them in one big dataframe.
+# For our task we will download the data from `Football-Data <https://football-data.co.uk/>`_
 
 #list of dataframes
 dflist = []
 #list of all seasons, we'll use them later
 seasonst = []
 
-for year in range(19,24,1):
+for year in range(18,23,1):
     #create a string with season name
     if year<9:
         yeartext='0'+str(year)+'0'+str(year+1)
@@ -45,9 +45,9 @@ performance = pd.concat(dflist).reset_index()
 ##############################################################################
 # Preparing data
 # ----------------------------
-# We want to investigate Pep Guardiola's City performance against other TOP6 clubs performance in this period.
+# We want to investigate a team's performance against other TOP6 clubs performance in this period.
 # For each of these teams, we get games played by them and assign number of points that they scored. Then, we calculate
-# the 10 game points rolling average. Feel free to experiment with window size and check how the diagram changes!  
+# the 38/36 game points rolling average according to the league. Feel free to experiment with window size and check how the diagram changes!  
 
 #top6 teams
 teams = ['Man City', 'Liverpool', 'Arsenal', 'Chelsea', 'Tottenham', 'Man United']
@@ -90,7 +90,7 @@ for team in teams:
         team_df.at[i, "Points"] = points
         team_df.at[i, "Game"] = game
     #calculate rolling average   
-    team_df['PointsRA'] = team_df['Points'].rolling(window=22, win_type='triang').mean()
+    team_df['PointsRA'] = team_df['Points'].rolling(window=38, win_type='triang').mean()
     #append df
     team_dfs[team] = team_df
 
@@ -99,7 +99,6 @@ for team in teams:
 # Making plot
 # ----------------------------
 # After calculating the rolling average, we can plot our data. Make sure that you understand the lines below!
-
 #create plot 
 fig, ax = plt.subplots(figsize=(20, 8))
 #arsenal got yellow because of those 2004 kits, but it was invisible so they got green  
@@ -110,7 +109,7 @@ for club, color, alpha in zip(teams, colors, alphas):
     ax.plot(team_dfs[club]['Game'],  team_dfs[club]['PointsRA'], linewidth=2, linestyle='-',color=color, alpha = alpha, zorder = 2, label = club)
 
 #set title
-ax.set_title("Man City 22 game rolling average points comparing to TOP 6 clubs", fontsize = 24, pad=20)
+ax.set_title("Man City 38 game rolling average points comparing to TOP 6 clubs", fontsize = 24, pad=20)
 #make visible ticks for beginning of each season
 ax.set_xticks(np.arange(0, max(team_dfs["Liverpool"]['Game']) + 38, 38))
 #no text
